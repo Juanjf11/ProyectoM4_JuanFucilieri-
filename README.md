@@ -70,5 +70,6 @@ Use el agente de Antigravity para generar codigo y un asistente de chat para gui
 
 
 
+
 Entrego autenticacion con Firebase, CRUD en Firestore, deploy en Vercel y README. Quedaron pendientes el envio de email con AWS SES, los tests y las imagenes del uso de la IA, que no llegue a implementar.
 Si es posible, los completo en los proximos dias. Gracias.

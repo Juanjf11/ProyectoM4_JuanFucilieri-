@@ -2,7 +2,7 @@
 
 SPA de gestion de tareas con autenticacion y persistencia en la nube. Proyecto integrador del modulo 4.
 
-**URL de produccion:** https://TU-URL.vercel.app
+**URL de produccion:** (https://gestor-tareas-self.vercel.app)
 
 ## Funcionalidades
 - Registro e inicio de sesion con email y contraseña, y con Google

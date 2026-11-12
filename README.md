@@ -66,8 +66,9 @@ Use el agente de Antigravity para generar codigo y un asistente de chat para gui
 - Pedir que explique la estructura antes de escribir codigo y leer el plan antes de aprobar.
 - Revisar los cambios (Review) y probar a mano, sin confiar solo en que compile.
 - Mantener las credenciales en `.env`, con `.env.example` sin valores reales, y verificar con `git status` antes de cada commit.
-.
-.
-.
+
+
+
+
 Entrego autenticacion con Firebase, CRUD en Firestore, deploy en Vercel y README. Quedaron pendientes el envio de email con AWS SES, los tests y las imagenes del uso de la IA, que no llegue a implementar.
 Si es posible, los completo en los proximos dias. Gracias.

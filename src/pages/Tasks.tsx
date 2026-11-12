@@ -1,19 +1,30 @@
 import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
+import { useTasks } from '../hooks/useTasks';
 import { logout } from '../services/authService';
+import { TodoForm } from '../components/TodoForm';
+import { TodoList } from '../components/TodoList';
 
 export const Tasks = () => {
   const { user } = useAuth();
+  const {
+    tasks,
+    loading,
+    error,
+    clearError,
+    handleCreateTask,
+    handleUpdateTask,
+    handleToggleTask,
+    handleDeleteTask,
+  } = useTasks();
+
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const handleLogout = async () => {
-    setError(null);
     setIsLoggingOut(true);
     try {
       await logout();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al cerrar sesión');
+    } catch {
       setIsLoggingOut(false);
     }
   };
@@ -27,6 +38,7 @@ export const Tasks = () => {
         fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
       }}
     >
+      {/* Barra superior */}
       <header
         style={{
           borderBottom: '1px solid #334155',
@@ -37,6 +49,7 @@ export const Tasks = () => {
           alignItems: 'center',
           flexWrap: 'wrap',
           gap: '1rem',
+          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.3)',
         }}
       >
         <div>
@@ -44,7 +57,7 @@ export const Tasks = () => {
             Gestor de Tareas
           </h1>
           <p style={{ margin: 0, fontSize: '0.875rem', color: '#94a3b8' }}>
-            Sesión iniciada como: <strong style={{ color: '#60a5fa' }}>{user?.email}</strong>
+            Usuario: <strong style={{ color: '#60a5fa' }}>{user?.email}</strong>
           </p>
         </div>
 
@@ -61,13 +74,22 @@ export const Tasks = () => {
             fontWeight: '600',
             cursor: isLoggingOut ? 'not-allowed' : 'pointer',
             opacity: isLoggingOut ? 0.7 : 1,
+            transition: 'background-color 0.2s',
           }}
         >
           {isLoggingOut ? 'Cerrando sesión...' : 'Cerrar Sesión'}
         </button>
       </header>
 
-      <main style={{ maxWidth: '800px', margin: '3rem auto', padding: '0 1.5rem' }}>
+      {/* Contenido principal */}
+      <main
+        style={{
+          maxWidth: '720px',
+          margin: '2rem auto',
+          padding: '0 1.5rem',
+        }}
+      >
+        {/* Banner de error */}
         {error && (
           <div
             role="alert"
@@ -78,36 +100,73 @@ export const Tasks = () => {
               padding: '0.75rem 1rem',
               borderRadius: '8px',
               marginBottom: '1.5rem',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              fontSize: '0.9rem',
             }}
           >
-            {error}
+            <span>{error}</span>
+            <button
+              onClick={clearError}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#fca5a5',
+                cursor: 'pointer',
+                fontWeight: 'bold',
+                padding: '0.2rem 0.5rem',
+                fontSize: '1rem',
+              }}
+              title="Cerrar aviso"
+            >
+              ✕
+            </button>
           </div>
         )}
 
-        <div
-          style={{
-            backgroundColor: '#1e293b',
-            border: '1px solid #334155',
-            borderRadius: '12px',
-            padding: '2rem',
-            textAlign: 'center',
-          }}
-        >
+        {/* Formulario de creación */}
+        <TodoForm onCreateTask={handleCreateTask} />
+
+        {/* Estado de carga o listado de tareas */}
+        {loading ? (
           <div
             style={{
-              fontSize: '3rem',
-              marginBottom: '1rem',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '3rem 0',
+              gap: '0.75rem',
             }}
           >
-            📋
+            <div
+              role="status"
+              aria-label="Cargando tareas"
+              style={{
+                width: '36px',
+                height: '36px',
+                border: '3px solid #334155',
+                borderTopColor: '#3b82f6',
+                borderRadius: '50%',
+                animation: 'spin 1s linear infinite',
+              }}
+            />
+            <style>
+              {`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}
+            </style>
+            <p style={{ color: '#94a3b8', fontSize: '0.9rem', margin: 0 }}>
+              Sincronizando tareas en tiempo real...
+            </p>
           </div>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '0.5rem' }}>
-            Panel de Tareas (Placeholder)
-          </h2>
-          <p style={{ color: '#94a3b8', fontSize: '1rem', maxWidth: '500px', margin: '0 auto' }}>
-            La autenticación fue configurada exitosamente con Firebase Auth. Aquí se integrará el CRUD de tareas.
-          </p>
-        </div>
+        ) : (
+          <TodoList
+            tasks={tasks}
+            onToggle={handleToggleTask}
+            onUpdate={handleUpdateTask}
+            onDelete={handleDeleteTask}
+          />
+        )}
       </main>
     </div>
   );
